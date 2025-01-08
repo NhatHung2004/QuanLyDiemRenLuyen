@@ -79,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'pointdb',
-        'USER': 'NhatHung',
-        'PASSWORD': 'nhathung123',
+        'USER': 'root',
+        'PASSWORD': 'admin123',
         'HOST': '' # mặc định localhost
     }
 }

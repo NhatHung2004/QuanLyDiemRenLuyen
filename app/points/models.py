@@ -11,7 +11,7 @@ class User(AbstractUser):
     ]
     
     email = models.EmailField(unique=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=ROLE_CHOICES[2][0])
     avatar = CloudinaryField(null=True)
     department = models.CharField(max_length=255, blank=True, null=True)  # Khoa
     active = models.BooleanField(default=False)  # Phê duyệt tài khoản (Sinh viên)
