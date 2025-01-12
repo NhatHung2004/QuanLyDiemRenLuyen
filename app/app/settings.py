@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,8 +39,23 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'points.apps.PointsConfig',
-    'rest_framework'
+    'rest_framework',
+    'oauth2_provider',
+    'drf_yasg'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # OAuth2
+        'rest_framework.authentication.SessionAuthentication',  # Tùy chọn
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Chỉ cho phép người dùng đã xác thực
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # Lớp phân trang mặc định
+    'PAGE_SIZE': 3
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -90,6 +106,9 @@ import pymysql
 pymysql.install_as_MySQLdb()
 
 AUTH_USER_MODEL = 'points.User'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Password validation
@@ -144,7 +163,11 @@ cloudinary.config(
     secure=True
 )
 
-OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
+OAUTH2_PROVIDER = { 
+    'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore',
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 36000,  # Thời gian sống của access token (10 giờ)
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 36000,  # Thời gian sống của refresh token 
+}
 
 CLIENT_ID = 'cnO3ZQcROJiNkl8Y64GSV3IEyxFpjO9E6R1REFWh'
 CLIENT_SECRET = 'njEpo5f23NEZrLEwdSRG1vKWcptW7CDPWGKVMwHhWJOZTeKTmvcPceWhigrgaO8UYFZYwoQbSetwNDdc7ca5bfyPtYPeDB6AtAci6XTIX7k8zFPyop97EpovnW7Jiu6X'

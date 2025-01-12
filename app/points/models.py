@@ -11,19 +11,38 @@ class User(AbstractUser):
     ]
     
     email = models.EmailField(unique=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=ROLE_CHOICES[2][0])
-    avatar = CloudinaryField(null=True)
-    department = models.CharField(max_length=255, blank=True, null=True)  # Khoa
-    active = models.BooleanField(default=False)  # Phê duyệt tài khoản (Sinh viên)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="Student")
+    image = CloudinaryField('image', null=True, blank=True)
+    department = models.ForeignKey("Department", on_delete=models.SET_NULL, null=True)  # Khoa
+    class_name = models.ForeignKey("Class", on_delete=models.SET_NULL, null=True)  # Lớp học
+    active = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
+    
+
+# Khoa
+class Department(models.Model):
+    name = models.CharField(max_length=255, unique=True, null=False)
+    description = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return self.name
+    
+
+# Lớp học
+class Class(models.Model):
+    name = models.CharField(max_length=255)  # Tên lớp
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='classes')  # Khoa
+
+    def __str__(self):
+        return self.name
 
 
 # Điểm rèn luyện 
 class TrainingScore(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'Student'})
-    term = models.CharField(max_length=20)  # Học kỳ hoặc năm học
+    term = models.CharField(max_length=20)
     scores = models.JSONField()  # Lưu điểm từng điều theo quy chế (dưới dạng JSON)
     total_score = models.IntegerField()  # Tổng điểm rèn luyện
     classification = models.CharField(max_length=50)  # Xếp loại: Xuất sắc, Giỏi, Khá, Trung Bình, Yếu, Kém
@@ -56,6 +75,17 @@ class MissingActivityReport(models.Model):
 
     def __str__(self):
         return f"Báo thiếu: {self.student.username} - {self.activity.title}"
+    
+
+# Bảng tin
+class Newsfeed(models.Model):
+    activity = models.OneToOneField(Activity, on_delete=models.CASCADE, related_name='newsfeed')
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(User, related_name='liked_newsfeeds', blank=True)
+    comments = models.ManyToManyField('Comment', related_name='newsfeed_comments', blank=True)
+
+    def __str__(self):
+        return f"Newsfeed: {self.activity.title}"
 
 
 # Bình luận
@@ -77,3 +107,14 @@ class Interaction(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.activity.title} - {'Like' if self.is_liked else 'Unlike'}"
+    
+
+# Điểm danh
+class Attendance(models.Model):
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name='attendance_records')
+    student = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'Student'})
+    attended = models.BooleanField(default=False)  # Trạng thái đã tham gia hay chưa
+
+    def __str__(self):
+        return f"{self.student.username} - {self.activity.title} ({'Đã tham gia' if self.attended else 'Chưa tham gia'})"
+
