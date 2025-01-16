@@ -56,7 +56,6 @@ class Activity(models.Model):
     title = models.CharField(max_length=255)  # Tên hoạt động
     description = models.TextField(null=True, blank=True)  # Mô tả hoạt động
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'Assistant'})
-    department = models.CharField(max_length=255, blank=True, null=True)  # Khoa tổ chức
     start_date = models.DateTimeField()  # Ngày bắt đầu
     end_date = models.DateTimeField()  # Ngày kết thúc
     participants = models.ManyToManyField(User, related_name='activities', blank=True, limit_choices_to={'role': 'Student'})
@@ -117,4 +116,3 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.student.username} - {self.activity.title} ({'Đã tham gia' if self.attended else 'Chưa tham gia'})"
-

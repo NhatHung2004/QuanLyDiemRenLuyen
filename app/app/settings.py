@@ -15,6 +15,8 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
 
 
 # Quick-start development settings - unsuitable for production
@@ -47,10 +49,6 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # OAuth2
-        'rest_framework.authentication.SessionAuthentication',  # Tùy chọn
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Chỉ cho phép người dùng đã xác thực
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # Lớp phân trang mặc định
     'PAGE_SIZE': 3
@@ -167,7 +165,14 @@ OAUTH2_PROVIDER = {
     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore',
     'ACCESS_TOKEN_EXPIRE_SECONDS': 36000,  # Thời gian sống của access token (10 giờ)
     'REFRESH_TOKEN_EXPIRE_SECONDS': 36000,  # Thời gian sống của refresh token 
+    "ALLOWED_GRANT_TYPES": [
+        "authorization_code",
+        "password",
+        "client_credentials",
+        "refresh_token",
+    ],
+    "ALLOWED_RESPONSE_TYPES": ["code", "token"],
 }
 
-CLIENT_ID = 'cnO3ZQcROJiNkl8Y64GSV3IEyxFpjO9E6R1REFWh'
-CLIENT_SECRET = 'njEpo5f23NEZrLEwdSRG1vKWcptW7CDPWGKVMwHhWJOZTeKTmvcPceWhigrgaO8UYFZYwoQbSetwNDdc7ca5bfyPtYPeDB6AtAci6XTIX7k8zFPyop97EpovnW7Jiu6X'
+CLIENT_ID = 'ZntaxrdaXAS7rHwESjokaoes3QSTYYIB7fEr86gl'
+CLIENT_SECRET = 'yeVJ8vj6M9mcUNHbCCOmURrtkHe0HCtIxtSH1t7bwDagvHNifRgiatzJKhcJlakHKu8jmuUihkfthfDLvs8zOAMIsow4fSmday8eK7RrYzlG4Xv3OZzAhErrJhsgtiud'
