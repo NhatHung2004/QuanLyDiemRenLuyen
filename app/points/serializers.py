@@ -96,4 +96,50 @@ class CommentSerializer(ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
+
+
+class UpdateTrainingScoreSerializer(serializers.Serializer):
+    student_id = serializers.IntegerField() # ID của học sinh
+    scores = serializers.JSONField()  # Điểm từng điều
+    term = serializers.CharField()  # Học kỳ
+
+    def validate(self, data):
+        # Kiểm tra tính hợp lệ của dữ liệu JSON
+        if not isinstance(data['scores'], dict):
+            raise serializers.ValidationError("Scores phải là đối tượng JSON.")
+        
+        # Kiểm tra điểm từng điều
+        for key, value in data['scores'].items():
+            if not isinstance(value, (int, float)) or value < 0 or value > 25:
+                raise serializers.ValidationError(f"Điểm không hợp lệ {key}: phải nằm giữa 0 và 25.")
+        
+        return data
+
+    def calculate_total_and_classification(self, scores):
+        total_score = sum(scores.values())
+        if total_score >= 90:
+            classification = "Xuất sắc"
+        elif total_score >= 80:
+            classification = "Giỏi"
+        elif total_score >= 70:
+            classification = "Khá"
+        elif total_score >= 50:
+            classification = "Trung Bình"
+        else:
+            classification = "Yếu"
+        return total_score, classification
+
+    def update(self, instance, validated_data):
+        instance.scores = validated_data['scores']
+        total_score, classification = self.calculate_total_and_classification(validated_data['scores'])
+        instance.total_score = total_score
+        instance.classification = classification
+        instance.save()
+        return instance
+
+    def create(self, validated_data):
+        total_score, classification = self.calculate_total_and_classification(validated_data['scores'])
+        validated_data['total_score'] = total_score
+        validated_data['classification'] = classification
+        return super().create(validated_data)
     

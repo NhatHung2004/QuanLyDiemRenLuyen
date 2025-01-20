@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
-from .serializers import UserRegistrationSerializers, DepartmentSerializers,TrainingScoreSerializers, ActivitySerializers, RegisterActivitySerializer, StudentReportSerializer, MissingActivityReportSerializer, CommentSerializer
+from .serializers import UserRegistrationSerializers, DepartmentSerializers,TrainingScoreSerializers, ActivitySerializers, RegisterActivitySerializer, StudentReportSerializer, MissingActivityReportSerializer, CommentSerializer, UpdateTrainingScoreSerializer
 from .models import User, Department, TrainingScore, Activity, MissingActivityReport, Comment
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser
@@ -42,13 +42,14 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveAPI
         return [AllowAny()]
     
 
-class StatsViewSet(viewsets.ViewSet, generics.ListAPIView):
+class ScoreViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
     """
         API trả về danh sách điểm rèn luyện của từng sinh viên.
     """
 
     queryset = TrainingScore.objects.all()
     serializer_class = TrainingScoreSerializers
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Xem điểm rèn luyện của 1 sinh viên",
@@ -154,6 +155,26 @@ class StatsViewSet(viewsets.ViewSet, generics.ListAPIView):
             response = HttpResponse(csv_data, content_type='text/csv; charset=utf-8')
             response['Content-Disposition'] = 'attachment; filename="training_scores.csv"'
             return response
+        
+    @action(detail=False, methods=['patch'], serializer_class=UpdateTrainingScoreSerializer)
+    def update_score(self, request):
+        """
+        API cập nhật điểm rèn luyện của sinh viên.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        student_id = serializer.validated_data['student_id']
+        term = serializer.validated_data['term']
+
+        try:
+            score = TrainingScore.objects.get(student_id=student_id, term=term)
+        except TrainingScore.DoesNotExist:
+            return Response({"detail": "Điểm rèn luyện không tồn tại."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer.update(score, serializer.validated_data)
+
+        return Response({"detail": "Cập nhật điểm rèn luyện thành công.", "data": serializer.data}, status=status.HTTP_200_OK)
     
 
 class DepartmentViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -331,37 +352,4 @@ class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, gener
         report.save()
 
         return Response({"detail": "Báo cáo đã được xác nhận."}, status=status.HTTP_200_OK)
-    
-    # @action(detail=True, methods=['post'])
-    # def reject(self, request, pk=None):
-    #     """
-    #     API từ chối báo cáo thiếu hoạt động.
-    #     """
-    #     try:
-    #         report = MissingActivityReport.objects.get(id=pk)
-    #     except MissingActivityReport.DoesNotExist:
-    #         return Response({"detail": "Báo cáo không tồn tại."}, status=status.HTTP_404_NOT_FOUND)
-
-    #     report.is_approved = False
-    #     report.save()
-
-    #     return Response({"detail": "Báo cáo đã bị từ chối."}, status=status.HTTP_200_OK)
-    
-    # @action(detail=False, methods=['get'])
-    # def pending(self, request):
-    #     """
-    #     API trả về danh sách báo cáo thiếu hoạt động chưa được xác nhận.
-    #     """
-    #     reports = MissingActivityReport.objects.filter(is_approved=False)
-    #     serializer = self.get_serializer(reports, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    # @action(detail=False, methods=['get'])
-    # def approved(self, request):
-    #     """
-    #     API trả về danh sách báo cáo thiếu hoạt động đã được xác nhận.
-    #     """
-    #     reports = MissingActivityReport.objects.filter(is_approved=True)
-    #     serializer = self.get_serializer(reports, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
     
