@@ -136,10 +136,4 @@ class UpdateTrainingScoreSerializer(serializers.Serializer):
         instance.classification = classification
         instance.save()
         return instance
-
-    def create(self, validated_data):
-        total_score, classification = self.calculate_total_and_classification(validated_data['scores'])
-        validated_data['total_score'] = total_score
-        validated_data['classification'] = classification
-        return super().create(validated_data)
     

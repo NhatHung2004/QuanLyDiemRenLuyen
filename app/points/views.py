@@ -49,7 +49,7 @@ class ScoreViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIVie
 
     queryset = TrainingScore.objects.all()
     serializer_class = TrainingScoreSerializers
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Xem điểm rèn luyện của 1 sinh viên",
