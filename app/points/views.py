@@ -12,6 +12,62 @@ from drf_yasg import openapi
 from .utils import export_training_scores_csv, export_training_scores_pdf
 from django.http import HttpResponse
 from django.utils.timezone import now
+from oauth2_provider.views import TokenView
+import json
+from rest_framework.renderers import JSONRenderer
+
+
+class CustomTokenView(TokenView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        # Chuyển đổi HttpResponse thành JSON
+        try:
+            data = json.loads(response.content)
+        except json.JSONDecodeError:
+            return Response({"error": "Invalid server response"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # Nếu response trả về lỗi, trả về lỗi đó
+        if response.status_code != 200:
+            return Response(data, status=response.status_code)
+
+        if request.content_type == "application/json":
+            body = json.loads(request.body)
+            username = body.get("username")
+        else:
+            username = request.POST.get("username")
+            
+        user = User.objects.filter(username=username).first()
+        print(username)
+
+        user_data = {}
+        if user:
+            user_data = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "image": user.image.url if user.image else None,
+            }
+        
+        # Ghi đè hoặc bổ sung dữ liệu vào response
+        custom_data = {
+            "access_token": data.get("access_token"),
+            "refresh_token": data.get("refresh_token"),
+            "expires_in": data.get("expires_in"),
+            "scope": data.get("scope"),
+            "token_type": data.get("token_type"),
+            # Bổ sung thông tin tùy chỉnh
+            "user": user_data,
+        }
+
+        custom_response = Response(custom_data, status=status.HTTP_200_OK)
+        custom_response.accepted_renderer = JSONRenderer()
+        custom_response.accepted_media_type = "application/json"
+        custom_response.renderer_context = {}
+
+        return custom_response
 
 
 # Create your views here.

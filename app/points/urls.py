@@ -13,4 +13,5 @@ router.register('missing_report', views.MissingActivityReportViewSet, basename='
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('o/token/', views.CustomTokenView.as_view(), name='custom_token'),
 ]
