@@ -5,6 +5,7 @@ from cloudinary.models import CloudinaryField
 # Create your models here.
 class User(AbstractUser):
     ROLE_CHOICES = [
+        ('Admin', 'Quản Trị Viên'),
         ('CTSV', 'Chuyên Viên CTSV'),
         ('Assistant', 'Trợ Lý Sinh Viên'),
         ('Student', 'Sinh Viên'),
@@ -13,7 +14,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="Student")
     image = CloudinaryField('image', null=True, blank=True)
-    department = models.ForeignKey("Department", on_delete=models.SET_NULL, null=True)  # Khoa
+    department = models.ForeignKey("Department", on_delete=models.SET_NULL, null=True, blank=True)  # Khoa
     class_name = models.ForeignKey("Class", on_delete=models.SET_NULL, null=True)  # Lớp học
     active = models.BooleanField(default=False)
     

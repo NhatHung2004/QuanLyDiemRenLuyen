@@ -18,13 +18,6 @@ class UserRegistrationSerializers(ModelSerializer):
         if value not in ['Assistant', 'Student']:
             raise ValidationError("Invalid role.")
         return value
-    
-    def validate_department(self, value):
-        if not value:
-            return None
-        if not Department.objects.filter(id=value).exists():
-            raise ValidationError("Department does not exist.")
-        return value
 
     def validate_email(self, value):
         if not value.endswith('@ou.edu.vn'):
@@ -73,7 +66,7 @@ class TrainingScoreSerializers(ModelSerializer):
 class ActivitySerializers(ModelSerializer):
     class Meta:
         model = Activity
-        fields = ['id', 'title', 'description', 'start_date', 'end_date']
+        fields = ['id', 'title', 'description', 'start_date', 'end_date', 'created_by']
 
 
 class RegisterActivitySerializer(serializers.Serializer):

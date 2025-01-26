@@ -71,7 +71,7 @@ class CustomTokenView(TokenView):
 
 
 # Create your views here.
-class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveAPIView):
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveAPIView, generics.ListAPIView, generics.DestroyAPIView):
     """
         API quản lý người dùng.
     """
