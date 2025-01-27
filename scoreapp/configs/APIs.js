@@ -7,6 +7,8 @@ export const endpoints = {
     'user': id =>  `/users/${id}/`,  // Endpoint lấy thông tin người dùng hiện tại
     'register': '/users/', // Endpoint đăng ký tài khoản
     'activities': '/activities/',  // Endpoint lấy danh sách hoạt động
+    'registerActivity': '/activities/register/',  // Endpoint đăng ký hoạt động
+    'joinedActivities': '/activities/participated/',  // Endpoint lấy danh sách hoạt động đã tham gia
 }
 
 // Axios instance cho các yêu cầu không cần xác thực

@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+
 
 const Events = () => {
+    const navigation = useNavigation();
     // Mẫu dữ liệu với màu nền, hình ảnh và các thông tin của danh mục
     const categories = [
         { 
@@ -9,7 +13,7 @@ const Events = () => {
             title: 'Xem hoạt động tham gia', 
             image: require('../../../assets/SinhVien/study-points.png'), // Hình ảnh của danh mục
             backgroundColor: '#FFB6C1', // Màu nền đỏ nhạt
-            onPress: () => alert('Đi đến hoạt động tham gia') 
+            onPress: () => navigation.navigate('JoinedActivities') // Chuyển hướng đến m
         },
         { 
             id: '2', 

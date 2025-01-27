@@ -32,9 +32,9 @@ const NewsFeed = () => {
         },
     ];
 
-    const userContext = useContext(MyUserContext);
-    console.log(userContext.user.username);
-    console.log(userContext.isLoggedIn);
+    // const userContext = useContext(MyUserContext);
+    // console.log(userContext.user.username);
+    // console.log(userContext.isLoggedIn);
 
     const renderItem = ({ item }) => {
         return (

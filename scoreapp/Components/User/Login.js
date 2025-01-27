@@ -54,6 +54,7 @@ const Login = () => {
             console.info(res.data.user);
             // const user = res.data.user;
             const id = res.data.user.id;
+            await AsyncStorage.setItem('id', JSON.stringify(id));
             await AsyncStorage.setItem('token', res.data.access_token);
             console.info(id);
 

@@ -26,7 +26,7 @@ const Events = () => {
             title: 'Quản lý hoạt động', 
             image: require('../../../assets/TLSinhVien/manager-activity.webp'),
             backgroundColor: '#D3D3D3',
-            onPress: () => alert('Đi đến hoạt động tham gia')
+            onPress: () => navigation.navigate('ManageEvents'), 
         },
         { 
             id: '4', 
