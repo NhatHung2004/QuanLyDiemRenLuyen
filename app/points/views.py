@@ -295,7 +295,17 @@ class ActivitiesViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateA
 
         return Response({"detail": "Đăng ký thành công hoạt động."}, status=status.HTTP_200_OK)
     
-    @action(detail=False, methods=['get'])
+    @swagger_auto_schema(
+        method='delete',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'activity_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID của hoạt động cần xóa')
+            },
+            required=['activity_id'],
+        )
+    )
+    @action(detail=False, methods=['get', 'delete'], url_path='participated')
     def participated(self, request):
         """
         API trả về danh sách các hoạt động mà sinh viên đã tham gia.
@@ -306,12 +316,27 @@ class ActivitiesViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateA
         if user.role != 'Student':
             return Response({"detail": "Chỉ sinh viên mới có thể sử dụng API này."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Lấy danh sách các hoạt động mà sinh viên đã tham gia
-        activities = user.activities.all()
+        if request.method == 'GET':
+            # Lấy danh sách các hoạt động mà sinh viên đã tham gia
+            activities = user.activities.all()
 
-        # Sử dụng serializer để trả về danh sách
-        serializer = self.get_serializer(activities, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            # Sử dụng serializer để trả về danh sách
+            serializer = self.get_serializer(activities, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            activity_id = int(request.data.get('activity_id')) # Lấy ID hoạt động từ request body
+            if not activity_id:
+                return Response({"detail": "Vui lòng cung cấp activity_id."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Kiểm tra xem hoạt động có thuộc về sinh viên không
+            activity = user.activities.filter(id=activity_id).first()
+            if not activity:
+                return Response({"detail": "Hoạt động không tồn tại hoặc không thuộc về bạn."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Xóa hoạt động khỏi danh sách của sinh viên
+            user.activities.remove(activity)
+            return Response({"detail": "Hoạt động đã được xóa thành công."}, status=status.HTTP_200_OK)
+
     
     @action(detail=True, methods=['post'], serializer_class=StudentReportSerializer)
     def report_missing(self, request, pk=None):
