@@ -1,25 +1,49 @@
 import { Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, View, ImageBackground, Dimensions, Image, StyleSheet } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as ImagePicker from 'expo-image-picker';
-import APIs, { endpoints } from "../../../../configs/APIs";
+import APIs, { authApis, endpoints } from "../../../../configs/APIs";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get("window");
 
-const MissingReport = () => {
+const MissingReport = ({ route }) => {
+
+    const { item } = route.params;  
+
     const [report, setReport] = useState({
-        title: "",
-        description: "",
-        image: "", // URL của ảnh sau khi upload lên Cloudinary
+        student_id: null, // student_id sẽ được gán sau khi lấy từ AsyncStorage
+        evidence: "", // URL của ảnh sau khi upload lên Cloudinary
     });
 
     const [loading, setLoading] = useState(false);
-    const [image, setImage] = useState(null);
+    const [evidence, setEvidence] = useState(null);  // Changed image to evidence
+
+    // Lấy student_id từ AsyncStorage khi component được load
+    useEffect(() => {
+        const fetchStudentId = async () => {
+            try {
+                const studentId = await AsyncStorage.getItem('id');
+                console.log("studentId", studentId);
+                if (studentId !== null) {
+                    setReport(prevReport => ({
+                        ...prevReport,
+                        student_id: studentId,
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching student_id from AsyncStorage:", error);
+            }
+        };
+
+        console.log("item_id", item.id);
+        fetchStudentId();
+    }, []);
 
     // Hàm tải ảnh lên Cloudinary
-    const uploadImageToCloudinary = async (imageUri) => {
+    const uploadEvidenceToCloudinary = async (evidenceUri) => {  // Changed image to evidence
         const data = new FormData();
-        const fileUri = imageUri.replace("file://", "");
+        const fileUri = evidenceUri.replace("file://", "");  // Changed image to evidence
         console.log("File URI:", fileUri);
 
         data.append("file", {
@@ -27,7 +51,7 @@ const MissingReport = () => {
             type: "image/jpeg", // Có thể thay đổi tùy theo định dạng ảnh
             name: "activity.jpg",
         });
-        data.append("upload_preset", "your_upload_preset"); // Thay 'your_upload_preset' bằng preset của bạn
+        data.append("upload_preset", "my_preset"); // Thay 'your_upload_preset' bằng preset của bạn
 
         try {
             const response = await fetch("https://api.cloudinary.com/v1_1/pqbou11/image/upload", {
@@ -48,17 +72,16 @@ const MissingReport = () => {
     };
 
     // Hàm chọn ảnh từ thư viện
-    const pickImage = async () => {
+    const pickEvidence = async () => {  // Changed pickImage to pickEvidence
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
             alert("Permissions denied!");
             return;
         }
-        console.log("here");
 
         const result = await ImagePicker.launchImageLibraryAsync();
         if (!result.canceled) {
-            setImage(result.assets[0]);
+            setEvidence(result.assets[0]);  // Changed image to evidence
         }
     };
 
@@ -66,21 +89,34 @@ const MissingReport = () => {
     const reportActivity = async () => {
         setLoading(true);
         try {
-            const imageUrl = image ? await uploadImageToCloudinary(image.uri) : "";
-            console.log("Image URL:", imageUrl);
+            const evidenceUrl = evidence ? await uploadEvidenceToCloudinary(evidence.uri) : "";  // Changed image to evidence
+            console.log("Evidence URL:", evidenceUrl);
 
-            if (!imageUrl && image) {
-                alert("Image upload failed. Try again!");
+            if (!evidenceUrl && evidence) {  // Changed image to evidence
+                alert("Image upload failed. Try again!");  // Changed image to evidence
                 setLoading(false);
                 return;
             }
 
             const form = new FormData();
-            const updatedReport = { ...report, image: imageUrl };
+            const updatedReport = { ...report, evidence: evidenceUrl };  // Changed image to evidence
             Object.keys(updatedReport).forEach((key) => form.append(key, updatedReport[key]));
 
+            const activity_id = item.id;
+
+            if (!activity_id) {
+                alert("Activity ID is missing.");
+                setLoading(false);
+                return;
+            }
+
+            const token = await AsyncStorage.getItem("token");
+            console.log("token", token);
             // Gửi yêu cầu báo thiếu hoạt động
-            await APIs.post(endpoints['report_missing_activity'], form, {
+            const endpoint = endpoints['missingReport'](activity_id);  // Truyền activity_id vào endpoint
+
+            console.log("form", form);
+            await authApis(token).post(endpoint, form, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
@@ -100,35 +136,17 @@ const MissingReport = () => {
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollViewContainer}>
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={pickImage}>
+                        <TouchableOpacity style={styles.button} onPress={pickEvidence}>  {/* Changed pickImage to pickEvidence */}
                             <Text style={styles.buttonText}>Chọn Ảnh Minh Chứng</Text>
                         </TouchableOpacity>
                     </View>
 
-                    {image && (
+                    {evidence && (  // Changed image to evidence
                         <View style={styles.imageContainer}>
                             <Text style={styles.imageText}>Ảnh Đã Chọn:</Text>
-                            <Image source={{ uri: image.uri }} style={styles.selectedImage} />
+                            <Image source={{ uri: evidence.uri }} style={styles.selectedImage} />  {/* Changed image to evidence */}
                         </View>
                     )}
-
-                    <TextInput 
-                        label="Tiêu Đề Báo Cáo" 
-                        style={styles.input} 
-                        placeholder="Nhập tiêu đề báo cáo" 
-                        value={report.title} 
-                        onChangeText={(text) => setReport({ ...report, title: text })} 
-                        mode="outlined" 
-                    />
-                    
-                    <TextInput 
-                        label="Mô Tả Báo Cáo" 
-                        style={styles.input} 
-                        placeholder="Nhập mô tả báo cáo" 
-                        value={report.description} 
-                        onChangeText={(text) => setReport({ ...report, description: text })} 
-                        mode="outlined" 
-                    />
 
                     <Button 
                         style={styles.submitButton} 

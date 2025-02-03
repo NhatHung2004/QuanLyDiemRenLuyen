@@ -33,7 +33,7 @@ const Events = () => {
             title: 'Quản lý báo thiếu', 
             image: require('../../../assets/TLSinhVien/manager-missing-report.jpg'),
             backgroundColor: '#90EE90',
-            onPress: () => navigation.navigate('BaoThieu'), // Sử dụng đúng tên màn hình
+            onPress: () => navigation.navigate('MissingReportActivities'), // Sử dụng đúng tên màn hình
         },
         { 
             id: '5', 

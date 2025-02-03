@@ -20,6 +20,8 @@ import Register from "./Components/User/Register";
 import UserProfile from "./Components/User/UserProfile";
 import ReportMissing from "./Components/User/Students/ThamGiaHoatDong/MissingReport";
 import MissingReport from "./Components/User/Students/ThamGiaHoatDong/MissingReport";
+import MissingReportActivities from "./Components/User/TroLySV/QLBaoThieu/MissingReportActivities";
+import MRADetail from "./Components/User/TroLySV/QLBaoThieu/MRADetail";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,7 +45,8 @@ const UserProfileNavigator = () => (
 const EventsStackNavigator = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Events" component={Events} />
-    <Stack.Screen name="BaoThieu" component={BaoThieu} />
+    <Stack.Screen name="MissingReportActivities" component={MissingReportActivities} />
+    <Stack.Screen name="MRADetail" component={MRADetail} />
     <Stack.Screen name="ManageEvents" component={ManageEvents} />
   </Stack.Navigator>
 );

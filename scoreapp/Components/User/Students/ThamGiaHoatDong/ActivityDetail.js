@@ -166,7 +166,7 @@ const ActivityDetail = ({ route }) => {
   };
 
   const handleReportMissingActivity = () => {
-    navigation.navigate('MissingReport')
+    navigation.navigate('MissingReport', {item});
   }
 
   return (

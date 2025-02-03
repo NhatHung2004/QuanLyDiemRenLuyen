@@ -5,6 +5,7 @@ const BASE_URL = 'https://hungnhat.pythonanywhere.com/';
 export const endpoints = {
     'login': '/o/token/',
     'user': id =>  `/users/${id}/`,  // Endpoint lấy thông tin người dùng hiện tại
+    'users': '/users/', 
     'register': '/users/', // Endpoint đăng ký tài khoản
     'activities': '/activities/',  // Endpoint lấy danh sách hoạt động
     'registerActivity': '/activities/register/',  // Endpoint đăng ký hoạt động
@@ -12,6 +13,10 @@ export const endpoints = {
     'cancelActivity':  '/activities/participated/', // Endpoint xoá hoạt động đã tham gia 
     'comments': id => `/activities/${id}/comments/`,  // Endpoint lấy danh sách bình luận
     'createComment': id =>  `/activities/${id}/comments/`,  // Endpoint tạo bình luận
+    'missingReport': id =>  `/activities/${id}/report_missing/`,
+    'missingReports': '/missing_report/', 
+    'deleteActivity': id => `/missing_report/${id}/`,
+    'comfirmActivity': id => `/missing_report/${id}/approve/`,
 }
 
 // Axios instance cho các yêu cầu không cần xác thực
