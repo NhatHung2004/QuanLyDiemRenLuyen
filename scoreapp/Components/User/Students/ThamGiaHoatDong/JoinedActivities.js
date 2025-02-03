@@ -39,7 +39,7 @@ const JoinedActivities = () => {
       <Text style={styles.activityDate}>Kết thúc: {item.end_date}</Text>
       <TouchableOpacity
         style={styles.detailButton}
-        onPress={() => navigation.navigate('ActivityDetail', { activity: item })}>
+        onPress={() => navigation.navigate('ActivityDetail', { item })}>
         <Text style={styles.detailButtonText}>Xem chi tiết</Text>
       </TouchableOpacity>
     </View>

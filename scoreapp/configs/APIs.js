@@ -9,6 +9,9 @@ export const endpoints = {
     'activities': '/activities/',  // Endpoint lấy danh sách hoạt động
     'registerActivity': '/activities/register/',  // Endpoint đăng ký hoạt động
     'joinedActivities': '/activities/participated/',  // Endpoint lấy danh sách hoạt động đã tham gia
+    'cancelActivity':  '/activities/participated/', // Endpoint xoá hoạt động đã tham gia 
+    'comments': id => `/activities/${id}/comments/`,  // Endpoint lấy danh sách bình luận
+    'createComment': id =>  `/activities/${id}/comments/`,  // Endpoint tạo bình luận
 }
 
 // Axios instance cho các yêu cầu không cần xác thực

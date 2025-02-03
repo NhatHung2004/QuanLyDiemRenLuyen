@@ -52,18 +52,24 @@ const Login = () => {
             });
             
             console.info(res.data.user);
-            // const user = res.data.user;
+            setUser(res.data.user);
             const id = res.data.user.id;
+            // Lưu id vào AsyncStorage
             await AsyncStorage.setItem('id', JSON.stringify(id));
+            // Lưu token vào AsyncStorage
             await AsyncStorage.setItem('token', res.data.access_token);
-            console.info(id);
+            console.log("token1", res.data.access_token);
+            // Lưu thông tin của người dùng
+            await AsyncStorage.setItem('userInfor', JSON.stringify(res.data.user));
+            
+            // console.info(res.data.user);
 
             setTimeout(async () => {
                 const token = await AsyncStorage.getItem("token");
                 console.info(token);
                 const user = await authApis(token).get(endpoints['user'](id));
 
-                console.info(user.data);
+                // console.info(user.data);
             
                 dispatch({"type": "login", "payload": user.data});
 

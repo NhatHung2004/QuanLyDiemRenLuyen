@@ -16,6 +16,10 @@ import ManageEvents from "./Components/User/TroLySV/QLHoatDong/ManageEvents";
 import MainTGHD from "./Components/User/Students/ThamGiaHoatDong/MainTGHD";
 import ActivityDetail from "./Components/User/Students/ThamGiaHoatDong/ActivityDetail";
 import JoinedActivities from "./Components/User/Students/ThamGiaHoatDong/JoinedActivities";
+import Register from "./Components/User/Register";
+import UserProfile from "./Components/User/UserProfile";
+import ReportMissing from "./Components/User/Students/ThamGiaHoatDong/MissingReport";
+import MissingReport from "./Components/User/Students/ThamGiaHoatDong/MissingReport";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,6 +29,13 @@ const StackNavigator = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="NewsFeed" component={NewsFeed} />
     <Stack.Screen name="Contents" component={Contents} />
+  </Stack.Navigator>
+);
+
+const UserProfileNavigator = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="UserProfile" component={UserProfile} />
+    
   </Stack.Navigator>
 );
 
@@ -42,8 +53,9 @@ const StudentEventsStackNavigator = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Events" component={EventsSV} />
     {/* <Stack.Screen name="MainTGHD" component={MainTGHD} /> */}
-    {/* <Stack.Screen name="ActivityDetail" component={ActivityDetail} /> */}
+    <Stack.Screen name="ActivityDetail" component={ActivityDetail} />
     <Stack.Screen name="JoinedActivities" component={JoinedActivities} />
+    
   </Stack.Navigator>
 );
 
@@ -51,6 +63,7 @@ const MainStackNavigator = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="MainTGHD" component={MainTGHD} />
     <Stack.Screen name="ActivityDetail" component={ActivityDetail} />
+    <Stack.Screen name="MissingReport" component={MissingReport} />
   </Stack.Navigator>
 );
 
@@ -59,6 +72,7 @@ const TabNavigatorSV = () => (
   <Tab.Navigator>
     <Tab.Screen name="Home" component={MainStackNavigator} />
     <Tab.Screen name="Events" component={StudentEventsStackNavigator} />
+    <Tab.Screen name="UserProfile" component={UserProfileNavigator} />
   </Tab.Navigator>
 );
 
@@ -66,6 +80,7 @@ const TabNavigatorTLSV = () => (
   <Tab.Navigator>
     <Tab.Screen name="Home" component={StackNavigator} />
     <Tab.Screen name="Events" component={EventsStackNavigator} />
+    <Tab.Screen name="UserProfile" component={UserProfileNavigator} />
   </Tab.Navigator>
 );
 
