@@ -17,6 +17,9 @@ export const endpoints = {
     'missingReports': '/missing_report/', 
     'deleteActivity': id => `/missing_report/${id}/`,
     'comfirmActivity': id => `/missing_report/${id}/approve/`,
+    'disciplineScore': '/scores/student_score/',
+    'trainingScoreStatistics': '/scores/stats_score/',
+    'exportReport': '/scores/export_file/',
 }
 
 // Axios instance cho các yêu cầu không cần xác thực

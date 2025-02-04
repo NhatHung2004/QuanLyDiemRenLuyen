@@ -20,7 +20,7 @@ const Events = () => {
             title: 'Xem điểm rèn luyện', 
             image: require('../../../assets/SinhVien/activity.jpg'), 
             backgroundColor: '#FF8C00', // Màu nền cam
-            onPress: () => alert('Đi đến điểm rèn luyện') 
+            onPress: () => navigation.navigate('DisciplineScore') // Chuyển hướng đến m
         },
     ];
 

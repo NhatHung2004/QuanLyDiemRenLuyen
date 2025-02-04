@@ -19,9 +19,19 @@ const ActivityDetail = ({ route }) => {
   const [joined, setJoined] = useState(false); // Kiểm tra đã tham gia chưa
   const navigation = useNavigation();
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = ("0" + date.getDate()).slice(-2); // Lấy ngày, đảm bảo 2 chữ số
+    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Lấy tháng (tháng bắt đầu từ 0)
+    const year = date.getFullYear();
+  
+    return `${day}/${month}/${year}`;
+  };
+
   useEffect(() => {
     fetchComments();
     checkJoinedStatus();
+    // console.log("item", item);
   });
 
   const fetchComments = async () => {
@@ -174,9 +184,8 @@ const ActivityDetail = ({ route }) => {
         <ScrollView contentContainerStyle={styles.card}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.description}>{item.description}</Text>
-          <Text style={styles.date}>📅 Bắt đầu: {new Date(item.start_date).toLocaleDateString()}</Text>
-          <Text style={styles.date}>⏳ Kết thúc: {new Date(item.end_date).toLocaleDateString()}</Text>
-          <Text style={styles.createdBy}>👤 Người tạo: {item.created_by}</Text>
+          <Text style={styles.date}>📅 Start Date: {formatDate(item.start_date)}</Text>
+          <Text style={styles.date}>⏳ End Date: {formatDate(item.end_date)}</Text>
   
           {joined ? (
             <>
@@ -243,31 +252,166 @@ const ActivityDetail = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#E3F2FD', padding: 20 },
-  card: { backgroundColor: '#fff', padding: 20, borderRadius: 15, elevation: 5, alignItems: 'center', marginBottom: 20 },
-  title: { fontSize: 22, fontWeight: 'bold', color: '#1976D2', marginBottom: 10, textAlign: 'center' },
-  description: { fontSize: 16, color: '#333', marginBottom: 15, textAlign: 'center' },
-  date: { fontSize: 14, color: '#555', marginBottom: 5, textAlign: 'center' },
-  createdBy: { fontSize: 14, color: '#777', fontStyle: 'italic', textAlign: 'center', marginBottom: 20 },
-  button: { backgroundColor: '#2196F3', padding: 12, borderRadius: 25, width: '80%', alignItems: 'center' },
-  buttonText: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
-  disabledButton: { backgroundColor: '#B0BEC5' },
-  cancelButton: { backgroundColor: '#F44336', padding: 12, borderRadius: 25, width: '80%', alignItems: 'center', marginTop: 10 },
-  cancelButtonText: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
-  commentSection: { backgroundColor: '#fff', borderRadius: 15, padding: 15, elevation: 3 },
-  commentTitle: { fontSize: 18, fontWeight: 'bold', color: '#1976D2', marginBottom: 10 },
-  commentItem: { flexDirection: 'row', backgroundColor: '#F5F5F5', padding: 10, borderRadius: 8, marginBottom: 5, alignItems: 'center' },
-  avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
-  commentContent: { flex: 1 },
-  commentUsername: { fontSize: 14, fontWeight: 'bold', color: '#333' },
-  commentText: { fontSize: 14, color: '#333', marginTop: 2 },
-  commentTime: { fontSize: 12, color: '#777', marginTop: 2 },
-  commentInputContainer: { flexDirection: 'row', marginTop: 10, alignItems: 'center' },
-  commentInput: { flex: 1, borderWidth: 1, borderColor: '#CCC', borderRadius: 20, padding: 10, fontSize: 14, backgroundColor: '#FFF' },
-  sendButton: { marginLeft: 10, backgroundColor: '#2196F3', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 20 },
-  sendButtonText: { color: '#FFF', fontSize: 14, fontWeight: 'bold' },
-  reportButton: { backgroundColor: '#FF9800', padding: 12, borderRadius: 25, width: '80%', alignItems: 'center', marginTop: 10 },
-  reportButtonText: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
+  container: {
+    flex: 1,
+    backgroundColor: '#F1F8E9',  // Nền sáng, nhẹ nhàng
+    padding: 15,
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 15,
+    elevation: 5,
+    marginBottom: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1E88E5', // Màu xanh đậm dễ nhìn
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 16,
+    color: '#616161', // Màu chữ tối nhẹ
+    marginBottom: 15,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  date: {
+    fontSize: 14,
+    color: '#1976D2', // Màu xanh lam
+    marginBottom: 5,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  button: {
+    backgroundColor: '#1976D2',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    width: '85%',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  disabledButton: {
+    backgroundColor: '#B0BEC5',
+  },
+  cancelButton: {
+    backgroundColor: '#F44336',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    width: '85%',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  commentSection: {
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    padding: 15,
+    elevation: 3,
+    marginTop: 20,
+  },
+  commentTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1976D2',
+    marginBottom: 12,
+  },
+  commentItem: {
+    flexDirection: 'row',
+    backgroundColor: '#f5f5f5',  // Màu nền nhẹ cho comment
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  commentContent: {
+    flex: 1,
+  },
+  commentUsername: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  commentText: {
+    fontSize: 14,
+    color: '#616161',
+    marginTop: 2,
+  },
+  commentTime: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 4,
+  },
+  commentInputContainer: {
+    flexDirection: 'row',
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  commentInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#CCC',
+    borderRadius: 25,
+    padding: 10,
+    fontSize: 14,
+    backgroundColor: '#fff',
+    marginRight: 10,
+  },
+  sendButton: {
+    backgroundColor: '#1976D2',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendButtonText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  reportButton: {
+    backgroundColor: '#FF9800',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    width: '85%',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  reportButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
 });
 
+
 export default ActivityDetail;
+
+
+

@@ -19,7 +19,7 @@ const Events = () => {
             title: 'Thống kê điểm rèn luyện', 
             image: require('../../../assets/TLSinhVien/staticss.jpg'),
             backgroundColor: '#FF8C00',
-            onPress: () => alert('Đi đến điểm rèn luyện')
+            onPress: () => navigation.navigate('TrainingScoreStatistics'), 
         },
         { 
             id: '3', 
