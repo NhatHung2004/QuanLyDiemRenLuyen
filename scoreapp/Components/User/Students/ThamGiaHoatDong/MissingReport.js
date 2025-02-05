@@ -1,5 +1,6 @@
-import { Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, View, ImageBackground, Dimensions, Image, StyleSheet } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+
+import { Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, View, ImageBackground, Dimensions, Image, StyleSheet, Alert } from "react-native";
+import { Button } from "react-native-paper";
 import { useState, useEffect } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import APIs, { authApis, endpoints } from "../../../../configs/APIs";
@@ -17,9 +18,9 @@ const MissingReport = ({ route }) => {
     });
 
     const [loading, setLoading] = useState(false);
-    const [evidence, setEvidence] = useState(null);  // Changed image to evidence
+    const [evidence, setEvidence] = useState(null);
 
-    // Lấy student_id từ AsyncStorage khi component được load
+    
     useEffect(() => {
         const fetchStudentId = async () => {
             try {
@@ -40,15 +41,14 @@ const MissingReport = ({ route }) => {
         fetchStudentId();
     }, []);
 
-    // Hàm tải ảnh lên Cloudinary
-    const uploadEvidenceToCloudinary = async (evidenceUri) => {  // Changed image to evidence
+    const uploadEvidenceToCloudinary = async (evidenceUri) => {  
         const data = new FormData();
-        const fileUri = evidenceUri.replace("file://", "");  // Changed image to evidence
+        const fileUri = evidenceUri.replace("file://", "");  
         console.log("File URI:", fileUri);
 
         data.append("file", {
             uri: fileUri,
-            type: "image/jpeg", // Có thể thay đổi tùy theo định dạng ảnh
+            type: "image/jpeg", 
             name: "activity.jpg",
         });
         data.append("upload_preset", "my_preset"); // Thay 'your_upload_preset' bằng preset của bạn
@@ -72,7 +72,7 @@ const MissingReport = ({ route }) => {
     };
 
     // Hàm chọn ảnh từ thư viện
-    const pickEvidence = async () => {  // Changed pickImage to pickEvidence
+    const pickEvidence = async () => {  
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
             alert("Permissions denied!");
@@ -81,7 +81,7 @@ const MissingReport = ({ route }) => {
 
         const result = await ImagePicker.launchImageLibraryAsync();
         if (!result.canceled) {
-            setEvidence(result.assets[0]);  // Changed image to evidence
+            setEvidence(result.assets[0]);  
         }
     };
 
@@ -92,14 +92,14 @@ const MissingReport = ({ route }) => {
             const evidenceUrl = evidence ? await uploadEvidenceToCloudinary(evidence.uri) : "";  // Changed image to evidence
             console.log("Evidence URL:", evidenceUrl);
 
-            if (!evidenceUrl && evidence) {  // Changed image to evidence
-                alert("Image upload failed. Try again!");  // Changed image to evidence
+            if (!evidenceUrl && evidence) { 
+                alert("Image upload failed. Try again!");  
                 setLoading(false);
                 return;
             }
 
             const form = new FormData();
-            const updatedReport = { ...report, evidence: evidenceUrl };  // Changed image to evidence
+            const updatedReport = { ...report, evidence: evidenceUrl };  
             Object.keys(updatedReport).forEach((key) => form.append(key, updatedReport[key]));
 
             const activity_id = item.id;
@@ -124,8 +124,11 @@ const MissingReport = ({ route }) => {
             alert("Báo thiếu hoạt động thành công!");
 
         } catch (error) {
-            console.error(error);
-            alert("Có lỗi xảy ra. Vui lòng thử lại.");
+            console.log("here")
+            console.error("Lỗi khi đăng ký hoạt động:", error.response?.data || error.message);
+            const errorMessage = error.response?.data?.detail || "Đã xảy ra lỗi, vui lòng thử lại.";
+    
+            Alert.alert("Lỗi", errorMessage);
         } finally {
             setLoading(false);
         }
@@ -136,15 +139,15 @@ const MissingReport = ({ route }) => {
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollViewContainer}>
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={pickEvidence}>  {/* Changed pickImage to pickEvidence */}
+                        <TouchableOpacity style={styles.button} onPress={pickEvidence}>  
                             <Text style={styles.buttonText}>Chọn Ảnh Minh Chứng</Text>
                         </TouchableOpacity>
                     </View>
 
-                    {evidence && (  // Changed image to evidence
+                    {evidence && (  
                         <View style={styles.imageContainer}>
                             <Text style={styles.imageText}>Ảnh Đã Chọn:</Text>
-                            <Image source={{ uri: evidence.uri }} style={styles.selectedImage} />  {/* Changed image to evidence */}
+                            <Image source={{ uri: evidence.uri }} style={styles.selectedImage} /> 
                         </View>
                     )}
 
@@ -177,11 +180,15 @@ const styles = StyleSheet.create({
     scrollViewContainer: {
         padding: 20,
         minHeight: height * 0.4,
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
-        borderRadius: 10,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        borderRadius: 15,
         justifyContent: 'center',
         margin: 10,
         marginTop: 30,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
     },
     buttonContainer: {
         alignItems: 'center',
@@ -189,10 +196,17 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: '#007BFF',
+        backgroundColor: 'transparent',
     },
     buttonText: {
         color: '#007BFF',
         fontWeight: 'bold',
+        fontSize: 16,
     },
     imageContainer: {
         alignItems: "center",
@@ -200,11 +214,13 @@ const styles = StyleSheet.create({
     },
     imageText: {
         marginBottom: 10,
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
     },
     selectedImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: 400,
+        height: 200,
         borderWidth: 1,
         borderColor: "#ccc",
     },
@@ -213,7 +229,8 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         marginTop: 20,
-        backgroundColor: '#A2D1F7',
+        backgroundColor: '#007BFF',
+        borderRadius: 30,
     },
 });
 

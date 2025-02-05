@@ -20,6 +20,10 @@ export const endpoints = {
     'disciplineScore': '/scores/student_score/',
     'trainingScoreStatistics': '/scores/stats_score/',
     'exportReport': '/scores/export_file/',
+    'getScores': '/scores/',
+    'deleteUser': id => `/users/${id}/`,
+    'initScores': '/scores/',
+    'updateScores': '/scores/update_score/',
 }
 
 // Axios instance cho các yêu cầu không cần xác thực

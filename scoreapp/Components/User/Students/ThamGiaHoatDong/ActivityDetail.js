@@ -21,8 +21,8 @@ const ActivityDetail = ({ route }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const day = ("0" + date.getDate()).slice(-2); // Lấy ngày, đảm bảo 2 chữ số
-    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Lấy tháng (tháng bắt đầu từ 0)
+    const day = ("0" + date.getDate()).slice(-2); 
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
     const year = date.getFullYear();
   
     return `${day}/${month}/${year}`;
@@ -129,7 +129,7 @@ const ActivityDetail = ({ route }) => {
 
       const response = await authApis(token).post(endpoints['registerActivity'], registerData);
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         Alert.alert("Thành công", "Bạn đã đăng ký hoạt động thành công!");
         setJoined(true); // Cập nhật trạng thái đã tham gia
       } else {
@@ -137,8 +137,10 @@ const ActivityDetail = ({ route }) => {
       }
     } catch (error) {
       console.error("Lỗi khi đăng ký hoạt động:", error.response?.data || error.message);
-      Alert.alert("Lỗi", "Đã xảy ra lỗi khi đăng ký hoạt động.");
-    }
+      const errorMessage = error.response?.data?.detail || "Đã xảy ra lỗi, vui lòng thử lại.";
+
+      Alert.alert("Lỗi", errorMessage);
+    } 
   };
 
   const handleCancelActivity = async () => {
@@ -169,6 +171,7 @@ const ActivityDetail = ({ route }) => {
         } else {
             Alert.alert("Lỗi", "Huỷ không thành công, vui lòng thử lại.");
         }
+        navigation.navigate("JoinedActivities");
     } catch (error) {
         console.error("Lỗi khi huỷ tham gia hoạt động:", error.response?.data || error.message);
         Alert.alert("Lỗi", error.response?.data?.message || "Đã xảy ra lỗi khi huỷ tham gia hoạt động.");

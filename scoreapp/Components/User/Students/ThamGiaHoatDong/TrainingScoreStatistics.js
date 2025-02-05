@@ -17,19 +17,22 @@ const TrainingScoreStatistics = () => {
 
   const facultiesMapping = {
     "Khoa CNTT": 1,
-    "Khoa Kinh Tế": 2,
+    "Khoa QTKD": 2,
+    "Khoa Kinh te": 3
   };
 
   // Biểu đồ phân bổ xếp loại
   const classificationLabels = Object.keys(data.classification_distribution || {});
   const classificationCounts = Object.values(data.classification_distribution || {}).map(Number);
 
+  const colors = ["#34b6f1", "#ffcd38", "#f56c6c", "#67c23a", "#909399", "#9b59b6", "#e67e22", "#1abc9c"];
+
   const chartData = classificationLabels.map((label, index) => ({
-    name: label,
-    population: classificationCounts[index],
-    color: index === 0 ? '#34b6f1' : '#ffcd38', // Thêm màu sắc tùy thuộc vào chỉ mục
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 15,
+      name: label,
+      population: classificationCounts[index],
+      color: colors[index % colors.length], // Chọn màu theo vòng lặp danh sách
+      legendFontColor: '#7F7F7F',
+      legendFontSize: 15,
   }));
 
   const handleSubmit = async () => {

@@ -2,38 +2,45 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const Events = () => {
+const EventsAdmin = () => {
     const navigation = useNavigation();
 
     // Dữ liệu các danh mục
     const categories = [
         { 
             id: '1', 
+            title: 'Quản lý tài khoản', 
+            image: require('../../../assets/TLSinhVien/manager-account2.webp'),
+            backgroundColor: '#FFB6C1',
+            onPress: () => navigation.navigate('UserManagement'), 
+        },
+        { 
+            id: '2', 
             title: 'Thống kê điểm rèn luyện', 
             image: require('../../../assets/TLSinhVien/staticss.jpg'),
             backgroundColor: '#FF8C00',
             onPress: () => navigation.navigate('TrainingScoreStatistics'), 
         },
         { 
-            id: '2', 
+            id: '3', 
             title: 'Quản lý hoạt động', 
             image: require('../../../assets/TLSinhVien/manager-activity.webp'),
             backgroundColor: '#D3D3D3',
             onPress: () => navigation.navigate('ManageEvents'), 
         },
         { 
-            id: '3', 
+            id: '4', 
             title: 'Quản lý báo thiếu', 
             image: require('../../../assets/TLSinhVien/manager-missing-report.jpg'),
             backgroundColor: '#90EE90',
-            onPress: () => navigation.navigate('MissingReportActivities'), // Sử dụng đúng tên màn hình
+            onPress: () => navigation.navigate('MissingReportActivities'), 
         },
         { 
-            id: '4', 
+            id: '5', 
             title: 'Cập nhật điểm rèn luyện', 
             image: require('../../../assets/TLSinhVien/update-points.jpg'),
             backgroundColor: '#ADD8E6',
-            onPress: () => navigation.navigate('DisciplineScoreUpdate'), // Sử dụng đúng tên màn hình
+            onPress: () => navigation.navigate('DisciplineScoreUpdate'), 
         }
     ];
 
@@ -97,4 +104,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Events;
+export default EventsAdmin;

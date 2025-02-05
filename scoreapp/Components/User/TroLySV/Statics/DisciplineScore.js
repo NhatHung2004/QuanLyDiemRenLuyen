@@ -25,22 +25,28 @@ const DisciplineScore = ({ studentId }) => {
       }
     };
 
+
     fetchData();
   }, [studentId]);
 
   if (loading) {
     return <ActivityIndicator size="large" style={styles.loading} />;
   }
-
-  if (!data) {
-    return <Text style={styles.error}>Không có dữ liệu</Text>;
+  
+  if (!data || !data.scores) {
+    return (
+      <View style={styles.centeredContainer}>
+        <Text style={styles.error}>Điểm rèn luyện của sinh viên chưa được khởi tạo</Text>
+      </View>
+    );
   }
-
-  const labels = Object.keys(data.scores);
-  const scores = Object.values(data.scores).map(Number);
+  
+  const labels = data.scores ? Object.keys(data.scores) : [];
+  const scores = data.scores ? Object.values(data.scores).map(Number) : [];
   const screenWidth = Dimensions.get("window").width;
-  const chartWidth = screenWidth - 60; // Nhỏ hơn Card để tránh bo góc
-  const maxScore = Math.ceil(Math.max(...scores) / 5) * 5 || 10; // Bội số của 5
+  const chartWidth = screenWidth - 60;
+  const maxScore = Math.ceil(Math.max(...scores) / 5) * 5 || 10;
+  
 
   return (
     <ScrollView style={styles.container}>
@@ -133,6 +139,17 @@ const styles = StyleSheet.create({
   summaryValue: { fontSize: 18, fontWeight: "bold", color: "#1E88E5" },
   loading: { flex: 1, justifyContent: "center", alignItems: "center" },
   error: { textAlign: "center", color: "red", marginTop: 20 },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  error: {
+    textAlign: "center",
+    color: "red",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });
 
 export default DisciplineScore;

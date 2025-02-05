@@ -2,25 +2,22 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-
-
 const Events = () => {
     const navigation = useNavigation();
-    // Mẫu dữ liệu với màu nền, hình ảnh và các thông tin của danh mục
     const categories = [
         { 
             id: '1', 
             title: 'Xem hoạt động tham gia', 
-            image: require('../../../assets/SinhVien/study-points.png'), // Hình ảnh của danh mục
-            backgroundColor: '#FFB6C1', // Màu nền đỏ nhạt
-            onPress: () => navigation.navigate('JoinedActivities') // Chuyển hướng đến m
+            image: require('../../../assets/SinhVien/study-points.png'), 
+            backgroundColor: '#FFB6C1', 
+            onPress: () => navigation.navigate('JoinedActivities') 
         },
         { 
             id: '2', 
             title: 'Xem điểm rèn luyện', 
             image: require('../../../assets/SinhVien/activity.jpg'), 
-            backgroundColor: '#FF8C00', // Màu nền cam
-            onPress: () => navigation.navigate('DisciplineScore') // Chuyển hướng đến m
+            backgroundColor: '#FF8C00', 
+            onPress: () => navigation.navigate('DisciplineScore')
         },
     ];
 
@@ -30,7 +27,7 @@ const Events = () => {
                 {categories.map((category, index) => (
                     <TouchableOpacity
                         key={category.id}
-                        style={[styles.card, { backgroundColor: category.backgroundColor }]} // Áp dụng màu nền riêng
+                        style={[styles.card, { backgroundColor: category.backgroundColor }]} 
                         onPress={category.onPress}
                     >
                         <View style={styles.imageContainer}>
@@ -55,27 +52,27 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
-        flexWrap: 'wrap', // Cho phép các mục xuống dòng khi hết chỗ
-        justifyContent: 'space-between', // Tạo khoảng cách đều giữa các mục
+        flexWrap: 'wrap', 
+        justifyContent: 'space-between', 
     },
     card: {
-        width: '48%', // Mỗi mục chiếm 48% chiều rộng của một hàng (2 mục trên 1 hàng)
+        width: '48%', 
         marginVertical: 10,
         borderRadius: 10,
-        overflow: 'hidden', // Đảm bảo hình ảnh và nội dung không bị tràn ra ngoài thẻ
-        elevation: 3, // Tạo bóng cho thẻ
+        overflow: 'hidden',
+        elevation: 3,
     },
     imageContainer: {
         width: '100%',
-        height: 150, // Giảm chiều cao của hình ảnh xuống 100px
-        backgroundColor: '#fff', // Đặt màu nền trắng cho hình ảnh
-        borderRadius: 10, // Bo góc cho phần hình ảnh
-        overflow: 'hidden', // Giới hạn hình ảnh trong khung vuông
+        height: 150, 
+        backgroundColor: '#fff', 
+        borderRadius: 10,
+        overflow: 'hidden', 
     },
     image: {
-        width: '100%', // Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của container
-        height: '100%', // Chiều cao bằng với chiều cao của container
-        resizeMode: 'cover', // Đảm bảo hình ảnh không bị méo và bao phủ hết vùng chứa
+        width: '100%', 
+        height: '100%',
+        resizeMode: 'cover', 
     },
     textContainer: {
         padding: 10,

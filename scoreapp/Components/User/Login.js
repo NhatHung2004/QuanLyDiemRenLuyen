@@ -4,6 +4,8 @@ import APIs, { authApis, endpoints } from "../../configs/APIs";
 import { KeyboardAvoidingView, Platform, Dimensions, ImageBackground, ScrollView } from "react-native";
 import { TextInput, Button, Text } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserIcon } from "lucide-react";
+import { useNavigation } from "@react-navigation/native";
 
 
 const { width, height } = Dimensions.get("window");
@@ -13,6 +15,8 @@ const Login = () => {
         "username": "",
         "password": ""
     });
+
+    const navigation = useNavigation();
 
 
     const users = {
@@ -68,8 +72,7 @@ const Login = () => {
                 const token = await AsyncStorage.getItem("token");
                 console.info(token);
                 const user = await authApis(token).get(endpoints['user'](id));
-
-                // console.info(user.data);
+                await AsyncStorage.setItem('userIf', JSON.stringify(user.data));
             
                 dispatch({"type": "login", "payload": user.data});
 
@@ -101,7 +104,7 @@ const Login = () => {
                         backgroundColor: "rgba(255, 255, 255, 0.8)",
                         borderRadius: 10,
                         marginHorizontal: 10,
-                        marginTop: 30
+                        marginTop: 200
                     }}
                 >
                     <Text
@@ -146,6 +149,16 @@ const Login = () => {
                     >
                         {loading ? "Đang xử lý..." : "Đăng nhập"}
                     </Button>
+                    {/* Chưa có tài khoản? Đăng ký */}
+                    <Text style={{ textAlign: "center", marginTop: 10 }}>
+                        Chưa có tài khoản?{" "}
+                        <Text
+                            style={{ color: "#007AFF", fontWeight: "bold" }}
+                            onPress={() => navigation.navigate("Register")}
+                        >
+                            Đăng ký
+                        </Text>
+                    </Text>
                 </ScrollView>
             </KeyboardAvoidingView>
         </ImageBackground>

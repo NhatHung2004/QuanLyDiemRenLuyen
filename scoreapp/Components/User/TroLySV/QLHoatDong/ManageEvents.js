@@ -9,31 +9,56 @@ const ManageEvents = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [newActivity, setNewActivity] = useState({ name: "", description: "", startDate: "", endDate: "" });
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [nextPage, setNextPage] = useState(null);
   const [token, setToken] = useState(null);
 
   const formatDate = (dateStr) => {
     const [day, month, year] = dateStr.split('/');
-    const date = new Date(year, month - 1, day); // months are 0-indexed
-    return date.toISOString(); // Converts to ISO 8601 format
+    const date = new Date(year, month - 1, day); 
+    return date.toISOString(); 
   };
 
   useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem("token");
-        setToken(storedToken);
-        if (storedToken) {
-          const response = await authApis(storedToken).get(endpoints["activities"]);
-          if (response.status === 200) setActivities(response.data.results);
-        }
-      } catch (error) {
-        console.error("Lỗi khi tải dữ liệu:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchToken();
+      fetchActivities();
   }, []);
+
+  const fetchActivities = async (url = endpoints["activities"]) => {
+    try {
+      setLoading(true);
+      const storedToken = await AsyncStorage.getItem("token");
+      setToken(storedToken);
+
+      if (storedToken) {
+        const response = await authApis(storedToken).get(url);
+        if (response.status === 200) {
+          setActivities(response.data.results);
+          setNextPage(response.data.next); // Lưu URL trang tiếp theo
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải dữ liệu:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMoreActivities = async () => {
+    if (!nextPage || loadingMore) return;
+    try {
+      setLoadingMore(true);
+      const response = await authApis(token).get(nextPage);
+      if (response.status === 200) {
+        setActivities((prevActivities) => [...prevActivities, ...response.data.results]);
+        setNextPage(response.data.next); // Cập nhật trang tiếp theo
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải thêm hoạt động:", error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+  
 
   const addActivity = async () => {
     if (!newActivity.name || !newActivity.description || !newActivity.startDate || !newActivity.endDate) {
@@ -43,8 +68,10 @@ const ManageEvents = () => {
     try {
       const formattedStartDate = formatDate(newActivity.startDate);
       const formattedEndDate = formatDate(newActivity.endDate);
+      console.log(newActivity);
 
       const id = await AsyncStorage.getItem("id");
+      console.log("id", id);
       const response = await authApis(token).post(endpoints["activities"], {
         title: newActivity.name,
         description: newActivity.description,
@@ -72,16 +99,23 @@ const ManageEvents = () => {
       {loading ? (
         <ActivityIndicator animating size="large" style={{ marginTop: 20 }} />
       ) : (
-        <FlatList data={activities} keyExtractor={(item) => item.id.toString()} renderItem={({ item }) => (
-          <Card style={{ marginVertical: 10 }}>
-            <Card.Title title={item.title} subtitle={`Người tạo: ${item.created_by}`} />
-            <Card.Content>
-              <Text>{item.description}</Text>
-              <Text>Bắt đầu: {new Date(item.start_date).toLocaleDateString("vi-VN")}</Text>
-              <Text>Kết thúc: {new Date(item.end_date).toLocaleDateString("vi-VN")}</Text>
-            </Card.Content>
-          </Card>
-        )} />
+        <FlatList
+          data={activities}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <Card style={{ marginVertical: 10 }}>
+              <Card.Title title={item.title} subtitle={`Người tạo: ${item.created_by}`} />
+              <Card.Content>
+                <Text>{item.description}</Text>
+                <Text>Bắt đầu: {new Date(item.start_date).toLocaleDateString("vi-VN")}</Text>
+                <Text>Kết thúc: {new Date(item.end_date).toLocaleDateString("vi-VN")}</Text>
+              </Card.Content>
+            </Card>
+          )}
+          onEndReached={loadMoreActivities} // Gọi khi cuộn đến cuối danh sách
+          onEndReachedThreshold={0.5} // Gần cuối danh sách 50% thì tải tiếp
+          ListFooterComponent={loadingMore ? <ActivityIndicator style={{ marginVertical: 10 }} /> : null}
+        />
       )}
 
       <Portal>
@@ -119,4 +153,5 @@ const ManageEvents = () => {
 };
 
 export default ManageEvents;
+
 
