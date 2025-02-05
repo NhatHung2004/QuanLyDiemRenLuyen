@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
-from .serializers import UserRegistrationSerializers, DepartmentSerializers,TrainingScoreSerializers, ActivitySerializers, RegisterActivitySerializer, StudentReportSerializer, MissingActivityReportSerializer, CommentSerializer, UpdateTrainingScoreSerializer
+from .serializers import UserRegistrationSerializers, DepartmentSerializers, TrainingScoreSerializers, ActivitySerializers, RegisterActivitySerializer, StudentReportSerializer, MissingActivityReportSerializer, CommentSerializer, UpdateTrainingScoreSerializer
 from .models import User, Department, TrainingScore, Activity, MissingActivityReport, Comment
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser
