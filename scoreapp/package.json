@@ -1,0 +1,45 @@
+{
+  "name": "scoreapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.1",
+    "@react-native-community/datetimepicker": "^8.3.0",
+    "@react-native-picker/picker": "^2.11.0",
+    "@react-navigation/bottom-tabs": "^7.2.0",
+    "@react-navigation/native": "^7.0.14",
+    "@react-navigation/stack": "^7.1.1",
+    "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
+    "expo": "~52.0.27",
+    "expo-file-system": "^18.0.8",
+    "expo-image-picker": "^16.0.4",
+    "expo-print": "~14.0.3",
+    "expo-sharing": "~11.2.2",
+    "expo-status-bar": "~2.0.1",
+    "lucide-react": "^0.474.0",
+    "papaparse": "^5.5.2",
+    "react": "18.3.1",
+    "react-native": "0.76.6",
+    "react-native-blob-util": "^0.21.2",
+    "react-native-chart-kit": "^6.12.0",
+    "react-native-datepicker": "^1.7.2",
+    "react-native-dropdown-picker": "^5.4.6",
+    "react-native-file-viewer": "^2.1.5",
+    "react-native-fs": "^2.20.0",
+    "react-native-paper": "^5.13.1",
+    "react-native-picker-select": "^9.3.1",
+    "react-native-vector-icons": "^10.2.0",
+    "rn-fetch-blob": "^0.12.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}
